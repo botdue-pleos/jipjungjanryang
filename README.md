@@ -90,49 +90,9 @@
 
 차량 신호는 하나의 공급원(`VehicleSignalSource`)으로 모이고, 판정은 화면과 분리된 엔진이 한다. 시연용 데이터와 실제 Pleos SDK를 같은 인터페이스로 바꿔 끼우므로 엔진과 화면은 그대로 쓴다. 점선은 아직 연결 전인 부분이다.
 
-```mermaid
-flowchart LR
-  subgraph IN["차량 입력 (Pleos Connect)"]
-    direction TB
-    VSDK["Vehicle SDK<br/>TurnSignal · Door · Window · Light"]
-    NAVI["NaviHelper SDK<br/>onTBTInfo · onReRouteEnded"]
-    CPM["CarPropertyManager<br/>기어 · 차속"]
-  end
+<img src="docs/architecture.png" width="100%" alt="시스템 구조도: 차량 입력, 신호 공급원, 판정 엔진, 화면, 차량 출력">
 
-  subgraph APP["집중잔량 앱"]
-    direction LR
-    subgraph SRCG["신호 공급원"]
-      direction TB
-      PLEOS["PleosSignalSource<br/>(연결 예정)"]
-      DEMO["DemoSignalSource<br/>시연용 3주치 주행"]
-      SRC["VehicleSignalSource"]
-    end
-    subgraph ENG["engine/ · 테스트 19개"]
-      direction TB
-      DET["MissedTurnSignalDetector<br/>깜빡이 누락 · 지나친 갈림길"]
-      CURVE["FocusCurve<br/>집중 곡선 · 도움 모드 판단<br/>주간 지도 · 효과 비교"]
-      DB[("차 안 저장소 (예정)<br/>외부 전송 없음")]
-    end
-    UI["ui/ · Jetpack Compose<br/>출발 · 주행 · P단 · 주간 지도"]
-  end
-
-  subgraph OUT["차량 출력"]
-    direction TB
-    ROUTE["NaviHelper<br/>편한 길 · 회전 100m 앞 안내"]
-    VOICE["온디바이스 STT · TTS<br/>생각 주차장 · 세운 자리"]
-  end
-
-  VSDK -.-> PLEOS
-  NAVI -.-> PLEOS
-  CPM -.-> PLEOS
-  PLEOS -.-> SRC
-  DEMO --> SRC
-  SRC -- DriveSignal --> DET --> CURVE
-  CURVE -.- DB
-  CURVE --> UI
-  UI -. 도움 모드 .-> ROUTE
-  UI -. 음성 .-> VOICE
-```
+<sub>diagrams.net으로 그렸다. 원본 <a href="docs/architecture.drawio">docs/architecture.drawio</a>는 <a href="https://app.diagrams.net">app.diagrams.net</a>에서 파일 › 열기로 바로 고칠 수 있다.</sub>
 
 ### 깜빡이 누락은 이렇게 판정한다
 
