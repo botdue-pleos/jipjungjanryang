@@ -1,20 +1,64 @@
+<div align="center">
+
 # 집중잔량
 
 **내 운전으로 찾은 집중 시간대, 그 시간엔 차가 덜어준다.**
-성인 ADHD 운전자를 위한 Pleos Connect 차량 앱. 운전 신호로 "내가 언제 집중이 흐트러지는지"를 본인 기준으로 그려 보여주고, 그 시간대에는 안내를 한 번 더 해 주고 떠오른 생각은 말로 맡아 두었다가 주차하면 돌려준다.
 
-> 2026 현대자동차그룹 차량용 앱 개발 공모전 "Code your App into Pleos App Market" 출품작, 팀 봇듀
+성인 ADHD 운전자를 위한 Pleos Connect 차량 앱
 
-**[시연 영상 보기 (60초)](docs/demo.mp4)** · [APK 받기](apk/봇듀_집중잔량_release.apk) · [개발일지](docs/개발일지.md)
+![Pleos Connect](https://img.shields.io/badge/Pleos_Connect-AAOS-002C5F?style=flat-square)
+![Kotlin](https://img.shields.io/badge/Kotlin-Jetpack_Compose-7F52FF?style=flat-square&logo=kotlin&logoColor=white)
+![Tests](https://img.shields.io/badge/엔진_테스트-19개_통과-00AAD2?style=flat-square)
+![Version](https://img.shields.io/badge/version-0.3.0-A36B4F?style=flat-square)
 
-<p>
-<img src="docs/screens/1_depart.png" width="245" alt="출발할 때: 하루 집중 곡선">
-<img src="docs/screens/2_driving.png" width="245" alt="주행 중: 깜빡이 알림과 생각 주차장">
-<img src="docs/screens/3_parked.png" width="245" alt="P단에 넣었을 때: 메모 돌려주기">
-</p>
-<img src="docs/screens/4_weekly.png" width="760" alt="이번 주 집중 지도 (주간 모드, 가로 2칸)">
+<img src="docs/mockups/2_driving.jpg" width="100%" alt="주행 중 집중잔량 화면이 계기판과 이어진 중앙 디스플레이에 떠 있는 모습">
 
-<sub>Pleos Connect 앱 창 크기(세로 1칸 920×1330, 가로 2칸 1870×1330)로 맞춘 에뮬레이터에서 찍은 실제 실행 화면</sub>
+[**시연 영상 (60초)**](docs/demo.mp4) · [APK 받기](apk/봇듀_집중잔량_release.apk) · [개발일지](docs/개발일지.md) · [시스템 구조](#시스템-구조)
+
+</div>
+
+> [!NOTE]
+> 2026 현대자동차그룹 차량용 앱 개발 공모전 "Code your App into Pleos App Market" 출품작, 팀 봇듀.
+> 차량 신호는 아직 시연용 3주치 주행 데이터로 재생한다. Pleos SDK 콜백 연결은 [현재 상태](#현재-상태)에 적었다.
+
+## 한눈에 보기
+
+| | |
+| --- | --- |
+| 누구를 위해 | 시간대에 따라 집중이 크게 달라지는 성인 ADHD 운전자 |
+| 무엇을 보나 | 내비 회전 안내 대비 깜빡이 누락, 안내받고 지나친 갈림길 |
+| 무엇을 해 주나 | 흐트러지는 시간대에만 안내를 한 번 더, 떠오른 생각은 말로 맡아 두었다가 P단에서 돌려준다 |
+| 무엇을 하지 않나 | 점수·진단·약효 예측. 남과 비교하지 않고 본인 기록 안에서만 본다 |
+| 데이터 | 차 안에만 저장. 밖으로 보내지 않는다 |
+
+## 차 안에서 이렇게 보인다
+
+<table>
+<tr>
+<td width="50%"><img src="docs/mockups/1_depart.jpg" alt="출발할 때 하루 집중 곡선"></td>
+<td width="50%"><img src="docs/mockups/2_driving.jpg" alt="주행 중 깜빡이 안내와 생각 주차장"></td>
+</tr>
+<tr>
+<td><b>출발</b><br>지금이 평소 흐트러지는 시간이면 하루 집중 곡선과 함께 도움 모드를 제안한다</td>
+<td><b>주행 중</b><br>회전 100m 앞에서 한 번 더 안내. "메모"라고 말하면 생각을 맡아 둔다</td>
+</tr>
+<tr>
+<td><img src="docs/mockups/3_parked.jpg" alt="P단에서 보관한 생각 돌려주기"></td>
+<td><img src="docs/mockups/4_weekly.jpg" alt="이번 주 집중 지도 가로 2칸"></td>
+</tr>
+<tr>
+<td><b>P단에 넣으면</b><br>맡아 둔 생각과 세운 자리를 돌려주고, 열린 창문까지 확인한다</td>
+<td><b>이번 주 집중 지도</b> (가로 2칸)<br>요일 × 시간대, 약 먹은 시각 기준으로도 본다</td>
+</tr>
+</table>
+
+<sub>앱 화면은 Pleos Connect 앱 창 크기(세로 1칸 920×1330, 가로 2칸 1870×1330) 에뮬레이터에서 찍은 실제 실행 화면이다. 둘레의 운전석과 계기판은 설명을 위해 그린 가상 목업이다.</sub>
+
+<details>
+<summary><b>시연 영상 미리보기 (GIF, 18초)</b></summary>
+<br>
+<a href="docs/demo.mp4"><img src="docs/demo-preview.gif" width="100%" alt="시연 영상 미리보기"></a>
+</details>
 
 ## 왜 만들었나
 
@@ -24,6 +68,9 @@
 | ADHD 약을 먹은 달에는 운전 사고 위험이 남성 38%, 여성 42% 낮았다 | Chang et al., JAMA Psychiatry 2017. 미국 건강보험 청구자료 230만 명 분석 |
 
 같은 사람도 시간대에 따라 집중이 다르다. 퇴근길은 아침에 먹은 약의 효과가 떨어지는 시간과 겹치기 쉬운데, 본인도 언제 흐트러지는지 객관적으로 알 방법이 없다. 휴대폰 운전 모드는 알림만 막고, 약효 추적 앱은 실제 운전 행동을 보지 않는다.
+
+> [!TIP]
+> **왜 휴대폰이 아니라 차여야 하나.** 깜빡이, 회전 안내, 기어 같은 흐트러짐의 증거는 차 안에서만 정확히 잡힌다. 생각 주차장은 기어 상태를 아는 차만 안전한 순간(P단)에 돌려줄 수 있다.
 
 ## 무엇을 하나
 
@@ -39,20 +86,75 @@
 
 약효를 추정하지 않는다. 실제로 관찰된 운전 패턴만 보여준다.
 
-**왜 휴대폰이 아니라 차여야 하나**: 깜빡이, 회전 안내, 기어 같은 흐트러짐의 증거는 차 안에서만 정확히 잡힌다. 생각 주차장은 기어 상태를 아는 차만 안전한 순간(P단)에 돌려줄 수 있다.
+## 시스템 구조
 
-## 판정 규칙
+차량 신호는 하나의 공급원(`VehicleSignalSource`)으로 모이고, 판정은 화면과 분리된 엔진이 한다. 시연용 데이터와 실제 Pleos SDK를 같은 인터페이스로 바꿔 끼우므로 엔진과 화면은 그대로 쓴다. 점선은 아직 연결 전인 부분이다.
 
-판정은 화면과 분리된 엔진(`app/src/main/java/com/botdue/jipjung/engine/`)이 한다. 모든 규칙에 단위 테스트가 있다.
+```mermaid
+flowchart LR
+  subgraph IN["차량 입력 (Pleos Connect)"]
+    direction TB
+    VSDK["Vehicle SDK<br/>TurnSignal · Door · Window · Light"]
+    NAVI["NaviHelper SDK<br/>onTBTInfo · onReRouteEnded"]
+    CPM["CarPropertyManager<br/>기어 · 차속"]
+  end
 
-1. **깜빡이 누락**: 내비가 회전을 안내하고(`NaviHelper onTBTInfo`) 90초 안에 같은 방향으로 회전했을 때, 회전 직전 10초 안에 같은 방향 깜빡이(`Vehicle TurnSignal`)가 켜지지 않았으면 놓침. 안내 없는 회전은 판정하지 않는다.
-2. **지나친 갈림길**: 회전 안내 후 90초 안에 회전하지 않고 경로를 다시 찾으면(`onReRouteEnded`) 지나침. 깜빡이 놓침과 함께 흐트러진 회전으로 센다. 안내 없는 재탐색은 세지 않는다.
-3. **하루 집중 곡선**: 6시부터 24시까지 1시간 단위 놓침 비율. 본인 기록 안에서만 비교하고, 남과 비교하거나 점수로 판정하지 않는다.
-4. **도움 모드 제안**: 지금부터 3시간의 놓침 비율이 본인 평소의 1.5배 이상이면 "흐트러지는 시간"으로 보고 출발할 때 알린다.
-5. **주간 지도**: 요일 x 시간대 6칸. 놓침 15% 미만은 안정적, 30% 이상은 자주 흐트러짐.
-6. **도움 모드 효과**: 같은 시간대(퇴근길 18~21시)에서 도움 모드를 켠 날과 끈 날의 놓침 비율을 따로 센다. 원인을 추정하지 않고 관찰된 비율만 견준다. 시연 데이터는 켠 날 놓침을 낮게 가정해 만든 것이다.
+  subgraph APP["집중잔량 앱"]
+    direction LR
+    subgraph SRCG["신호 공급원"]
+      direction TB
+      PLEOS["PleosSignalSource<br/>(연결 예정)"]
+      DEMO["DemoSignalSource<br/>시연용 3주치 주행"]
+      SRC["VehicleSignalSource"]
+    end
+    subgraph ENG["engine/ · 테스트 19개"]
+      direction TB
+      DET["MissedTurnSignalDetector<br/>깜빡이 누락 · 지나친 갈림길"]
+      CURVE["FocusCurve<br/>집중 곡선 · 도움 모드 판단<br/>주간 지도 · 효과 비교"]
+      DB[("차 안 저장소 (예정)<br/>외부 전송 없음")]
+    end
+    UI["ui/ · Jetpack Compose<br/>출발 · 주행 · P단 · 주간 지도"]
+  end
 
-## 구조
+  subgraph OUT["차량 출력"]
+    direction TB
+    ROUTE["NaviHelper<br/>편한 길 · 회전 100m 앞 안내"]
+    VOICE["온디바이스 STT · TTS<br/>생각 주차장 · 세운 자리"]
+  end
+
+  VSDK -.-> PLEOS
+  NAVI -.-> PLEOS
+  CPM -.-> PLEOS
+  PLEOS -.-> SRC
+  DEMO --> SRC
+  SRC -- DriveSignal --> DET --> CURVE
+  CURVE -.- DB
+  CURVE --> UI
+  UI -. 도움 모드 .-> ROUTE
+  UI -. 음성 .-> VOICE
+```
+
+### 깜빡이 누락은 이렇게 판정한다
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant N as NaviHelper
+  participant T as TurnSignal
+  participant D as MissedTurnSignalDetector
+  participant C as FocusCurve
+  participant U as 화면
+  N->>D: 회전 안내 (오른쪽, 300m)
+  Note over D: 90초 안에 같은 방향 회전을 기다린다
+  T-->>D: 방향지시등 상태 (꺼짐)
+  D->>D: 회전 통과, 직전 10초 안에 오른쪽 깜빡이 없음
+  D->>C: 놓침 1건 (18시대)
+  C->>U: 오늘 집중 곡선 갱신
+  Note over N,U: 안내 없이 회전하면 판정하지 않는다
+```
+
+<details>
+<summary><b>폴더 구조</b></summary>
 
 ```
 app/src/main/java/com/botdue/jipjung/
@@ -65,7 +167,10 @@ app/src/main/java/com/botdue/jipjung/
 └── MainActivity.kt                화면 흐름
 ```
 
-### Pleos SDK 연결 계획
+</details>
+
+<details>
+<summary><b>Pleos SDK 연결 계획</b></summary>
 
 | 신호 | API |
 | --- | --- |
@@ -77,6 +182,19 @@ app/src/main/java/com/botdue/jipjung/
 
 `VehicleSignalSource` 를 구현한 `PleosSignalSource` 를 추가하면 화면과 엔진은 그대로 쓴다.
 
+</details>
+
+## 판정 규칙
+
+판정은 엔진(`app/src/main/java/com/botdue/jipjung/engine/`)이 한다. 모든 규칙에 단위 테스트가 있다.
+
+1. **깜빡이 누락**: 내비가 회전을 안내하고(`NaviHelper onTBTInfo`) 90초 안에 같은 방향으로 회전했을 때, 회전 직전 10초 안에 같은 방향 깜빡이(`Vehicle TurnSignal`)가 켜지지 않았으면 놓침. 안내 없는 회전은 판정하지 않는다.
+2. **지나친 갈림길**: 회전 안내 후 90초 안에 회전하지 않고 경로를 다시 찾으면(`onReRouteEnded`) 지나침. 깜빡이 놓침과 함께 흐트러진 회전으로 센다. 안내 없는 재탐색은 세지 않는다.
+3. **하루 집중 곡선**: 6시부터 24시까지 1시간 단위 놓침 비율. 본인 기록 안에서만 비교하고, 남과 비교하거나 점수로 판정하지 않는다.
+4. **도움 모드 제안**: 지금부터 3시간의 놓침 비율이 본인 평소의 1.5배 이상이면 "흐트러지는 시간"으로 보고 출발할 때 알린다.
+5. **주간 지도**: 요일 x 시간대 6칸. 놓침 15% 미만은 안정적, 30% 이상은 자주 흐트러짐.
+6. **도움 모드 효과**: 같은 시간대(퇴근길 18~21시)에서 도움 모드를 켠 날과 끈 날의 놓침 비율을 따로 센다. 원인을 추정하지 않고 관찰된 비율만 견준다. 시연 데이터는 켠 날 놓침을 낮게 가정해 만든 것이다.
+
 ## 실행
 
 ```bash
@@ -85,7 +203,7 @@ adb install apk/봇듀_집중잔량_release.apk   # Pleos Connect Emulator(AAOS)
 ./gradlew :app:assembleRelease              # APK 빌드 (JDK 17)
 ```
 
-차량 신호는 아직 시연용 3주치 주행 데이터로 재생한다. 시연 시나리오는 저녁 퇴근길(오후 6시 40분 출발)이다. 주행 화면의 "메모 말하기"가 음성 인식을, "P단에 넣기"가 기어 신호를 대신한다.
+시연 시나리오는 저녁 퇴근길(오후 6시 40분 출발)이다. 주행 화면의 "메모 말하기"가 음성 인식을, "P단에 넣기"가 기어 신호를 대신한다.
 
 ## 현재 상태
 
@@ -101,9 +219,10 @@ adb install apk/봇듀_집중잔량_release.apk   # Pleos Connect Emulator(AAOS)
 
 ## 원칙
 
-- 복용·운전 기록은 차 안에만 저장하고 밖으로 보내지 않는다.
-- 운전 습관을 보여줄 뿐 의학적 진단이나 약효 예측이 아니다.
-- ADHD를 고쳐야 할 결함이 아니라 차가 맞춰주는 특성으로 다룬다.
+> [!IMPORTANT]
+> - 복용·운전 기록은 차 안에만 저장하고 밖으로 보내지 않는다.
+> - 운전 습관을 보여줄 뿐 의학적 진단이나 약효 예측이 아니다.
+> - ADHD를 고쳐야 할 결함이 아니라 차가 맞춰주는 특성으로 다룬다.
 
 ## 라이선스
 
