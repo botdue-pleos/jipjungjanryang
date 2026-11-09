@@ -36,7 +36,10 @@ class MainActivity : ComponentActivity() {
         val source = DemoSignalSource()
         val results = MissedTurnSignalDetector().detect(source.signals())
         val curve = FocusCurve(results)
-        setContent { JipjungApp(curve, source.helpDays) }
+        // 화면 캡처·영상용: adb shell am start ... --es screen Parked --ei memos 3
+        val start = intent.getStringExtra("screen")?.let { runCatching { Screen.valueOf(it) }.getOrNull() } ?: Screen.Depart
+        val startMemos = intent.getIntExtra("memos", 0)
+        setContent { JipjungApp(curve, source.helpDays, start, startMemos) }
     }
 }
 
@@ -48,12 +51,12 @@ private val SAMPLE_MEMOS = listOf(
 )
 
 @Composable
-fun JipjungApp(curve: FocusCurve, helpDays: Set<java.time.LocalDate>) {
+fun JipjungApp(curve: FocusCurve, helpDays: Set<java.time.LocalDate>, start: Screen = Screen.Depart, startMemos: Int = 0) {
     // AAOS 주간/야간 모드를 따른다
     val palette = if (isSystemInDarkTheme()) NightPalette else DayPalette
-    var screen by remember { mutableStateOf(Screen.Depart) }
+    var screen by remember { mutableStateOf(start) }
     var helpMode by remember { mutableStateOf(true) }
-    val memos = remember { mutableStateListOf<Memo>() }
+    val memos = remember { mutableStateListOf<Memo>().apply { addAll(SAMPLE_MEMOS.take(startMemos)) } }
     val assets = LocalContext.current.assets
     val font = remember { astaSans(assets) }
 

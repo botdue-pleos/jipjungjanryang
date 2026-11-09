@@ -1,6 +1,8 @@
 package com.botdue.jipjung.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -59,7 +61,7 @@ fun DepartScreen(
             listOf("6시", "12시", "18시", "24시").forEach { T(it, 22.tx, color = pal.sub) }
         }
         Spacer(Modifier.height(8.px))
-        T("불이 많이 켜질수록 회전 안내를 자주 놓친 시간이에요", 22.tx, color = pal.sub)
+        T("칸이 많이 찬 시간일수록 회전 안내를 잘 따랐어요. 파란 칸이 지금부터 3시간이에요.", 22.tx, color = pal.sub)
 
         Spacer(Modifier.height(44.px))
         Divider()
@@ -75,31 +77,37 @@ fun DepartScreen(
     }
 }
 
-/** 하루 집중 곡선: 6시~24시 18칸, 아래부터 불이 켜지는 픽셀 막대 */
+/**
+ * 하루 집중 곡선을 전기차 충전 표시처럼 그린다: 6시~24시 18개 막대, 막대마다 6칸.
+ * 그 시간에 회전 안내를 잘 따랐을수록 칸이 많이 찬다(집중이 남아 있던 시간).
+ * 지금부터 3시간은 충전 빛(Active Blue)으로 칠하고 빈 칸도 같은 색 테두리로 보여 준다.
+ */
 @Composable
 fun FocusCurveGrid(heights: List<Int>, nowHours: IntRange, rows: Int = 6) {
     val p = pal
     Column(
         Modifier
             .fillMaxWidth()
-            .semantics { contentDescription = "하루 집중 곡선. 막대가 높을수록 회전 안내를 자주 놓친 시간이에요." },
+            .semantics { contentDescription = "하루 집중 잔량. 칸이 많이 찬 시간일수록 회전 안내를 잘 따랐어요." },
         verticalArrangement = Arrangement.spacedBy(8.px),
     ) {
         for (row in 0 until rows) {
             Row(horizontalArrangement = Arrangement.spacedBy(8.px)) {
                 heights.forEachIndexed { col, h ->
-                    val lit = rows - row <= h
+                    val charge = rows + 1 - h
+                    val filled = rows - row <= charge
                     val isNow = (col + 6) in nowHours
-                    val color = when {
-                        isNow && lit -> p.cellNow
-                        lit -> p.cellBar
-                        else -> p.cellEmpty
-                    }
+                    val shape = RoundedCornerShape(3.px)
                     Box(
                         Modifier
                             .weight(1f)
                             .aspectRatio(1f)
-                            .background(color, RoundedCornerShape(4.px))
+                            .then(
+                                when {
+                                    filled -> Modifier.background(if (isNow) p.cellNow else p.cellBar, shape)
+                                    else -> Modifier.border(BorderStroke(2.px, if (isNow) p.cellNow else p.cellEmpty), shape)
+                                }
+                            )
                     )
                 }
             }

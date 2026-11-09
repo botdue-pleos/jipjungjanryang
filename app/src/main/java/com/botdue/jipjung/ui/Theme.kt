@@ -44,6 +44,7 @@ data class Palette(
     val primaryBg: Color,
     val primaryFg: Color,
     val outline: Color,
+    /** 모래색 카드: 운전자가 맡겨 둔 생각에만 쓴다 (사람의 말이 화면의 주인공) */
     val cardBg: Color,
     val cardFg: Color,
     val cardSub: Color,
@@ -52,22 +53,30 @@ data class Palette(
     val mapStable: Color,
     val mapSlight: Color,
     val mapOften: Color,
+    /** 차가 알려 주는 정보 카드 (창문·전조등 등) */
+    val surface: Color,
 )
 
+/*
+ * 야간: 광고 "밤낚시"의 밤 충전소. Hyundai Blue보다 한 단계 깊은 밤 남색 바탕에
+ * 충전 빛(Active Blue)은 "지금"에만, 모래색은 운전자의 생각 카드에만 쓴다.
+ */
 val NightPalette = Palette(
-    bg = Color(0xFF002C5F), fg = Color(0xFFF6F3F2), sub = Color(0xFFAACAE6), line = Color(0xFF2A5A8F),
-    cellEmpty = Color(0xFF0E3B6F), cellBar = Color(0xFF3A7FB8), cellNow = Color(0xFFE4DCD3),
-    primaryBg = Color(0xFF00AAD2), primaryFg = Color(0xFF002C5F), outline = Color(0xFF3F6799),
+    bg = Color(0xFF00193A), fg = Color(0xFFF6F3F2), sub = Color(0xFFAACAE6), line = Color(0xFF143E6B),
+    cellEmpty = Color(0xFF2A5A8F), cellBar = Color(0xFF3A7FB8), cellNow = Color(0xFF00AAD2),
+    primaryBg = Color(0xFF00AAD2), primaryFg = Color(0xFF00193A), outline = Color(0xFF3F6799),
     cardBg = Color(0xFFE4DCD3), cardFg = Color(0xFF002C5F), cardSub = Color(0xFF3B4A5C), accent = Color(0xFF00AAD2),
-    mapNone = Color(0xFF0E3B6F), mapStable = Color(0xFF3A7FB8), mapSlight = Color(0xFF7FA9C9), mapOften = Color(0xFFE4DCD3),
+    mapNone = Color(0xFF0B2A50), mapStable = Color(0xFF3A7FB8), mapSlight = Color(0xFF24598F), mapOften = Color(0xFF00193A),
+    surface = Color(0xFF002C5F),
 )
 
 val DayPalette = Palette(
     bg = Color(0xFFF6F3F2), fg = Color(0xFF002C5F), sub = Color(0xFF4A5A70), line = Color(0xFFD5CCC2),
-    cellEmpty = Color(0xFFE4DCD3), cellBar = Color(0xFF6B8FB3), cellNow = Color(0xFF002C5F),
+    cellEmpty = Color(0xFFB9AFA4), cellBar = Color(0xFF6B8FB3), cellNow = Color(0xFF007FA8),
     primaryBg = Color(0xFF002C5F), primaryFg = Color(0xFFF6F3F2), outline = Color(0xFFB9AFA4),
     cardBg = Color(0xFFE4DCD3), cardFg = Color(0xFF002C5F), cardSub = Color(0xFF3B4A5C), accent = Color(0xFF007FA8),
-    mapNone = Color(0xFFE4DCD3), mapStable = Color(0xFFAACAE6), mapSlight = Color(0xFF6B8FB3), mapOften = Color(0xFF002C5F),
+    mapNone = Color(0xFFE4DCD3), mapStable = Color(0xFF6B8FB3), mapSlight = Color(0xFFAACAE6), mapOften = Color(0xFFF6F3F2),
+    surface = Color(0xFFFFFFFF),
 )
 
 val LocalPalette = staticCompositionLocalOf { NightPalette }

@@ -9,7 +9,7 @@
 ![Pleos Connect](https://img.shields.io/badge/Pleos_Connect-AAOS-002C5F?style=flat-square)
 ![Kotlin](https://img.shields.io/badge/Kotlin-Jetpack_Compose-7F52FF?style=flat-square&logo=kotlin&logoColor=white)
 ![Tests](https://img.shields.io/badge/엔진_테스트-19개_통과-00AAD2?style=flat-square)
-![Version](https://img.shields.io/badge/version-0.3.0-A36B4F?style=flat-square)
+![Version](https://img.shields.io/badge/version-0.4.0-A36B4F?style=flat-square)
 
 <img src="docs/mockups/2_driving.jpg" width="100%" alt="주행 중 집중잔량 화면이 계기판과 이어진 중앙 디스플레이에 떠 있는 모습">
 
@@ -39,7 +39,7 @@
 <td width="50%"><img src="docs/mockups/2_driving.jpg" alt="주행 중 깜빡이 안내와 생각 주차장"></td>
 </tr>
 <tr>
-<td><b>출발</b><br>지금이 평소 흐트러지는 시간이면 하루 집중 곡선과 함께 도움 모드를 제안한다</td>
+<td><b>출발</b><br>하루 집중 곡선을 충전 칸으로 보여 주고, 지금이 평소 흐트러지는 시간이면 도움 모드를 제안한다</td>
 <td><b>주행 중</b><br>회전 100m 앞에서 한 번 더 안내. "메모"라고 말하면 생각을 맡아 둔다</td>
 </tr>
 <tr>
@@ -59,6 +59,15 @@
 <br>
 <a href="docs/demo.mp4"><img src="docs/demo-preview.gif" width="100%" alt="시연 영상 미리보기"></a>
 </details>
+
+## 디자인
+
+현대차 아이오닉 5 단편 광고 "밤낚시"(칸 라이언즈 2025 그랑프리)의 밤 충전소에서 출발했다. 이 광고에는 차가 나오지 않고 사람만 나오며, 장면 전체가 차의 카메라 시선이다. 집중잔량도 차 데이터보다 운전자의 시간과 생각을 앞에 둔다.
+
+- **집중을 충전 칸으로**: 하루 집중 곡선은 6시~24시 막대 18개, 막대마다 6칸이다. 그 시간에 회전 안내를 잘 따랐을수록 칸이 많이 찬다. 지금부터 3시간만 충전 빛(Active Blue)으로 칠한다.
+- **모래색은 생각에만**: 운전 중 맡겨 둔 생각은 P단에서 모래색 카드로 돌려준다. 차가 알려 주는 정보(창문·전조등)는 남색 카드로 구분한다.
+- **이번 주 집중 지도**: 자주 흐트러진 칸은 빈 충전 칸처럼 테두리만 남긴다.
+- 색은 Hyundai Blue보다 한 단계 깊은 밤 남색 바탕에 현대차 CI의 Active Blue·Sky Blue·Sand, 서체는 Pleos 공식 Asta Sans.
 
 ## 왜 만들었나
 

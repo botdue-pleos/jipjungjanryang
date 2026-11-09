@@ -145,6 +145,8 @@ private fun FocusMap(curve: FocusCurve) {
                             .weight(1f)
                             .height(96.px)
                             .background(level.color(), RoundedCornerShape(6.px))
+                            // 잔량이 바닥난 칸은 빈 충전 칸처럼 테두리만
+                            .border(BorderStroke(2.px, if (level == FocusLevel.OFTEN) p.cellNow else Color.Transparent), RoundedCornerShape(6.px))
                     )
                 }
             }
@@ -153,9 +155,9 @@ private fun FocusMap(curve: FocusCurve) {
     Spacer(Modifier.height(32.px))
     val legend = listOf(
         FocusLevel.NONE to "운전 안 함",
-        FocusLevel.STABLE to "안정적",
-        FocusLevel.SLIGHT to "조금 흐트러짐",
-        FocusLevel.OFTEN to "자주 흐트러짐",
+        FocusLevel.STABLE to "잔량 넉넉 (안정적)",
+        FocusLevel.SLIGHT to "조금 줄어듦",
+        FocusLevel.OFTEN to "바닥 (자주 흐트러짐)",
     )
     legend.chunked(2).forEach { pair ->
       Row(Modifier.padding(bottom = 16.px)) {
@@ -165,7 +167,7 @@ private fun FocusMap(curve: FocusCurve) {
                     Modifier
                         .size(26.px)
                         .background(level.color(), RoundedCornerShape(4.px))
-                        .border(BorderStroke(2.px, if (level == FocusLevel.NONE) p.outline else Color.Transparent), RoundedCornerShape(4.px))
+                        .border(BorderStroke(2.px, when (level) { FocusLevel.NONE -> p.outline; FocusLevel.OFTEN -> p.cellNow; else -> Color.Transparent }), RoundedCornerShape(4.px))
                 )
                 T(label, 26.tx, Modifier.padding(start = 12.px), color = p.sub)
             }

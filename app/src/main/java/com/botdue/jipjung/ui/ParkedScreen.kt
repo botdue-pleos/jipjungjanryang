@@ -66,22 +66,24 @@ fun ParkedScreen(
         val title = if (memos.isEmpty()) "보관한 생각은\n없어요" else "생각 ${memos.size}개를\n보관해 뒀어요"
         T(title, 56.tx, weight = FontWeight.Bold, lineHeight = 1.25f)
 
-        Spacer(Modifier.height(56.px))
-        Divider()
-        memos.forEachIndexed { i, memo ->
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 28.px),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Column(Modifier.weight(1f)) {
-                    T(memo.text, 36.tx, weight = FontWeight.SemiBold, color = if (memo.done) pal.sub else pal.fg)
-                    T(memo.note, 24.tx, color = pal.sub)
+        // 맡겨 둔 생각은 모래색 카드로: 이 화면의 주인공은 운전자의 말이다
+        Spacer(Modifier.height(48.px))
+        Column(verticalArrangement = Arrangement.spacedBy(14.px)) {
+            memos.forEachIndexed { i, memo ->
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .background(if (memo.done) pal.surface else pal.cardBg, RoundedCornerShape(14.px))
+                        .padding(horizontal = 32.px, vertical = 24.px),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column(Modifier.weight(1f)) {
+                        T(memo.text, 36.tx, weight = FontWeight.Bold, color = if (memo.done) pal.sub else pal.cardFg)
+                        T(memo.note, 24.tx, color = if (memo.done) pal.sub else pal.cardSub)
+                    }
+                    CheckBox(memo.done, "${memo.text} 확인함") { onToggle(i) }
                 }
-                CheckBox(memo.done, "${memo.text} 확인함") { onToggle(i) }
             }
-            Divider()
         }
 
         Spacer(Modifier.height(56.px))
@@ -108,28 +110,28 @@ fun ParkedScreen(
         Column(
             Modifier
                 .fillMaxWidth()
-                .background(pal.cardBg, RoundedCornerShape(14.px))
+                .background(pal.surface, RoundedCornerShape(14.px))
                 .padding(36.px),
             verticalArrangement = Arrangement.spacedBy(22.px),
         ) {
-            T("내리기 전에", 26.tx, weight = FontWeight.Bold, color = pal.cardFg)
+            T("내리기 전에", 26.tx, weight = FontWeight.Bold, color = pal.sub)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 T(
                     if (windowClosed) "조수석 창문을 닫았어요" else "조수석 창문이 열려 있어요",
-                    38.tx, Modifier.weight(1f), FontWeight.Bold, pal.cardFg,
+                    38.tx, Modifier.weight(1f), FontWeight.Bold, pal.fg,
                 )
                 if (!windowClosed) {
                     Box(
                         Modifier
                             .height(84.px)
-                            .background(pal.cardFg, RoundedCornerShape(12.px))
+                            .background(pal.primaryBg, RoundedCornerShape(12.px))
                             .clickable(role = Role.Button) { windowClosed = true }
                             .padding(horizontal = 34.px),
                         contentAlignment = Alignment.Center,
-                    ) { T("창문 닫기", 30.tx, weight = FontWeight.Bold, color = pal.cardBg) }
+                    ) { T("창문 닫기", 30.tx, weight = FontWeight.Bold, color = pal.primaryFg) }
                 }
             }
-            T("전조등은 꺼져 있어요", 26.tx, color = pal.cardSub)
+            T("전조등은 꺼져 있어요", 26.tx, color = pal.sub)
         }
 
         // 메모 개수에 따라 길이가 달라져 스크롤로 두고 버튼은 내용 아래에 붙인다
@@ -174,7 +176,7 @@ private fun CheckBox(checked: Boolean, label: String, onClick: () -> Unit) {
             }
             drawPath(
                 path,
-                if (checked) p.bg else p.accent,
+                if (checked) p.bg else p.outline,
                 style = Stroke(2.5f * u, cap = StrokeCap.Round, join = StrokeJoin.Round),
             )
         }
