@@ -59,8 +59,7 @@ fun ParkedScreen(
             .verticalScroll(rememberScrollState())
             .padding(start = 64.px, end = 64.px, top = 64.px, bottom = 56.px)
     ) {
-        Header("집중잔량")
-        Spacer(Modifier.height(80.px))
+        Spacer(Modifier.height(40.px))
         T("도착했어요. 오는 길에 떠올린 생각이에요.", 30.tx, color = pal.sub)
         Spacer(Modifier.height(16.px))
         val title = if (memos.isEmpty()) "보관한 생각은\n없어요" else "생각 ${memos.size}개를\n보관해 뒀어요"

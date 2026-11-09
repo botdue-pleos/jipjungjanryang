@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.LineBreak
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.unit.Dp
@@ -38,6 +39,7 @@ fun T(
     weight: FontWeight = FontWeight.Normal,
     color: Color = pal.fg,
     lineHeight: Float = 1.4f,
+    align: TextAlign? = null,
 ) {
     Text(
         text = text,
@@ -51,6 +53,7 @@ fun T(
             letterSpacing = if (size.value >= 30) (-0.02).em else 0.em,
             // 한국어를 어절 단위로 줄바꿈 ("있/어요"처럼 끊기지 않게). 기기 언어와 상관없이 ko로 지정해야 적용된다
             localeList = LocaleList("ko-KR"),
+            textAlign = align ?: TextAlign.Unspecified,
             lineBreak = LineBreak(
                 strategy = if (size.value >= 30) LineBreak.Strategy.Balanced else LineBreak.Strategy.HighQuality,
                 strictness = LineBreak.Strictness.Strict,

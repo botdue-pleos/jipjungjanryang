@@ -85,7 +85,7 @@ fun WeeklyScreen(curve: FocusCurve, helpDays: Set<LocalDate>, memoCount: Int, on
 
 @Composable
 private fun ColumnScope.Summary(curve: FocusCurve, helpDays: Set<LocalDate>, memoCount: Int, onHome: () -> Unit, scrolling: Boolean = false) {
-    Header("집중잔량")
+    T("이번 주", 28.tx, color = pal.sub)
     Spacer(Modifier.height(80.px))
     T("평일 퇴근길에 가장\n자주 흐트러졌어요", 56.tx, weight = FontWeight.Bold, lineHeight = 1.25f)
     Spacer(Modifier.height(24.px))
@@ -144,9 +144,9 @@ private fun FocusMap(curve: FocusCurve) {
                         Modifier
                             .weight(1f)
                             .height(96.px)
-                            .background(level.color(), RoundedCornerShape(6.px))
+                            .background(level.color(), RoundedCornerShape(48.px))
                             // 잔량이 바닥난 칸은 빈 충전 칸처럼 테두리만
-                            .border(BorderStroke(2.px, if (level == FocusLevel.OFTEN) p.cellNow else Color.Transparent), RoundedCornerShape(6.px))
+                            .border(BorderStroke(2.px, if (level == FocusLevel.OFTEN) p.cellNow else Color.Transparent), RoundedCornerShape(48.px))
                     )
                 }
             }

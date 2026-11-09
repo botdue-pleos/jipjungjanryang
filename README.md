@@ -9,7 +9,7 @@
 ![Pleos Connect](https://img.shields.io/badge/Pleos_Connect-AAOS-002C5F?style=flat-square)
 ![Kotlin](https://img.shields.io/badge/Kotlin-Jetpack_Compose-7F52FF?style=flat-square&logo=kotlin&logoColor=white)
 ![Tests](https://img.shields.io/badge/엔진_테스트-19개_통과-00AAD2?style=flat-square)
-![Version](https://img.shields.io/badge/version-0.4.0-A36B4F?style=flat-square)
+![Version](https://img.shields.io/badge/version-0.5.0-A36B4F?style=flat-square)
 
 <img src="docs/mockups/2_driving.jpg" width="100%" alt="주행 중 집중잔량 화면이 계기판과 이어진 중앙 디스플레이에 떠 있는 모습">
 
@@ -35,12 +35,12 @@
 
 <table>
 <tr>
-<td width="50%"><img src="docs/mockups/1_depart.jpg" alt="출발할 때 하루 집중 곡선"></td>
+<td width="50%"><img src="docs/mockups/1_depart.jpg" alt="출발할 때 하루 집중 잔량 충전 링"></td>
 <td width="50%"><img src="docs/mockups/2_driving.jpg" alt="주행 중 깜빡이 안내와 생각 주차장"></td>
 </tr>
 <tr>
-<td><b>출발</b><br>하루 집중 곡선을 충전 칸으로 보여 주고, 지금이 평소 흐트러지는 시간이면 도움 모드를 제안한다</td>
-<td><b>주행 중</b><br>회전 100m 앞에서 한 번 더 안내. "메모"라고 말하면 생각을 맡아 둔다</td>
+<td><b>출발</b><br>하루 집중 잔량을 둥근 충전 링으로 보여 주고, 지금이 평소 흐트러지는 시간이면 도움 모드를 제안한다</td>
+<td><b>주행 중</b><br>다음 회전 하나만 남은 거리 링으로. 100m 앞에서 아래 자막 띠로 한 번 더 안내하고, "메모"라고 말하면 생각을 맡아 둔다</td>
 </tr>
 <tr>
 <td><img src="docs/mockups/3_parked.jpg" alt="P단에서 보관한 생각 돌려주기"></td>
@@ -60,11 +60,11 @@
 <tr>
 <td width="45%"><img src="docs/demo-preview.gif" width="100%" alt="출발 화면에서 도움 모드로 출발하고, 회전 100m 앞에서 깜빡이 안내가 나오고, 메모를 맡긴 뒤 P단에서 생각 카드로 돌려받는 흐름"></td>
 <td>
-<b>저녁 퇴근길 (15초)</b><br><br>
-1. 출발: 지금부터 3시간이 충전 칸이 적은 시간이라 도움 모드를 권한다.<br>
-2. 주행: 회전 100m 앞에서 "지금 오른쪽 깜빡이를 켜세요". 떠오른 생각은 "메모"라고 말해 맡긴다.<br>
+<b>저녁 퇴근길 (22초)</b><br><br>
+1. 출발: 충전 링에서 지금부터 3시간이 칸이 적은 때라 도움 모드를 권한다.<br>
+2. 주행: 남은 거리 링이 줄어들다 100m 앞에서 자막 띠에 "지금 오른쪽 깜빡이를 켜세요". 떠오른 생각은 "메모"라고 말해 맡긴다.<br>
 3. P단: 맡긴 생각을 모래색 카드로 돌려주고, 열린 창문을 알려 준다.<br><br>
-<sub>에뮬레이터 실제 화면(v0.4.0)을 녹화했다.</sub>
+<sub>에뮬레이터 실제 화면(v0.5.0)을 녹화했다.</sub>
 </td>
 </tr>
 </table>
@@ -99,10 +99,14 @@
 
 현대차 아이오닉 5 단편 광고 "밤낚시"(칸 라이언즈 2025 그랑프리)의 밤 충전소에서 출발했다. 이 광고에는 차가 나오지 않고 사람만 나오며, 장면 전체가 차의 카메라 시선이다. 집중잔량도 차 데이터보다 운전자의 시간과 생각을 앞에 둔다.
 
-- **집중을 충전 칸으로**: 하루 집중 곡선은 6시~24시 막대 18개, 막대마다 6칸이다. 그 시간에 회전 안내를 잘 따랐을수록 칸이 많이 찬다. 지금부터 3시간만 충전 빛(Active Blue)으로 칠한다.
+세 앱이 같은 차 안에서 같은 앱처럼 보이지 않도록 화면 문법부터 나눴다. 집중잔량은 **둥근 계기와 영화 자막**이다.
+
+- **충전 링**: 하루 집중 잔량은 270도에 18칸(6시~24시)인 둥근 링이다. 칸이 바깥으로 많이 찰수록 그 시간에 회전 안내를 잘 따랐다는 뜻이고, 지금부터 3시간만 충전 빛(Active Blue)으로 칠한다. 화면에는 이 링 하나와 버튼 하나만 둔다.
+- **남은 거리 링**: 주행 중에는 다음 회전 하나만 가운데 둔다. 링이 300m에서 0으로 줄어들고, 할 말은 화면 아래 자막 띠에 한 줄로 나온다.
 - **모래색은 생각에만**: 운전 중 맡겨 둔 생각은 P단에서 모래색 카드로 돌려준다. 차가 알려 주는 정보(창문·전조등)는 남색 카드로 구분한다.
-- **이번 주 집중 지도**: 자주 흐트러진 칸은 빈 충전 칸처럼 테두리만 남긴다.
-- 색은 Hyundai Blue보다 한 단계 깊은 밤 남색 바탕에 현대차 CI의 Active Blue·Sky Blue·Sand, 서체는 Pleos 공식 Asta Sans.
+- **이번 주 집중 지도**: 요일 × 시간대 칸을 알약 모양으로 둥글게, 자주 흐트러진 칸은 테두리만 남긴다.
+- 색은 Hyundai Blue 바탕에 현대차 CI의 Active Blue·Sky Blue·Sand.
+- 서체는 Asta Sans(42dot, OFL). 현대차 광고에 쓰이는 Hyundai Sans는 배포할 수 없는 전용 서체라, Pleos가 쓰는 같은 계열 공개 서체로 세 앱을 통일했다. 한국어는 어절 단위로만 줄을 바꾼다(`WordBreak.Phrase`).
 
 ## 시스템 구조
 
@@ -197,6 +201,7 @@ adb shell am start -n com.botdue.jipjung/.MainActivity --es screen Parked --ei m
 - [x] Pleos 앱 창 크기 에뮬레이터에서 동작 확인, 시연 영상
 - [x] 디자인 "밤 충전소": 충전 칸 곡선, 생각 카드, 빈 충전 칸 지도 (v0.4.0)
 - [x] 시연 영상 v6: v0.4.0 화면으로 다시 녹화
+- [x] 디자인 v2 "충전 링": 세 앱이 겹치지 않게 화면 문법을 나눔. 충전 링 출발 화면, 남은 거리 링과 자막 띠, 알약 칸 지도, 시연 영상 v7(영화 자막 문법) (v0.5.0)
 - [ ] Pleos Connect Emulator에서 SDK 콜백 연결 (`PleosSignalSource`)
 - [ ] 생각 주차장·세운 자리 STT·TTS, 휴대폰 전송 방식 확인, 내리기 전 확인 실제 신호, 로컬 DB 저장
 - [ ] 도움 모드 경로 옵션·공조 제어, 시연용 주행 데이터 재생 도구 (2차 PT용)
