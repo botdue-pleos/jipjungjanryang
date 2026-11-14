@@ -59,20 +59,23 @@ data class Palette(
     val cellFull: Color,
     /** 주행 화면 아래 자막 띠 */
     val band: Color,
+    /** 주행 중 자막(깜빡이 안내). 바탕과 대비가 가장 큰 색: 야간은 흰색 */
+    val caption: Color,
 )
 
 /*
  * 야간: 광고 "밤낚시"의 밤 충전소. 바탕은 현대차 고유색 Hyundai Blue.
  * 충전 칸은 찬 정도에 따라 세 단계(Sky Blue > 중간 > 빈 칸 테두리), 충전 빛 Active Blue는 "지금"에만.
  * 모래색은 운전자가 맡겨 둔 생각에만 쓴다.
+ * 주간 지도: 운전 안 한 칸은 빈 테두리(mapNone 투명), 자주 흐트러진 칸(바닥)은 경고 톤 호박색으로 채운다.
  */
 val NightPalette = Palette(
     bg = Color(0xFF002C5F), fg = Color(0xFFF6F3F2), sub = Color(0xFFAACAE6), line = Color(0xFF1E4A7C),
     cellEmpty = Color(0xFF1E4A7C), cellBar = Color(0xFF5E8FBF), cellNow = Color(0xFF00AAD2),
     primaryBg = Color(0xFF00AAD2), primaryFg = Color(0xFF002C5F), outline = Color(0xFF4C77A6),
     cardBg = Color(0xFFE4DCD3), cardFg = Color(0xFF002C5F), cardSub = Color(0xFF3B4A5C), accent = Color(0xFF00AAD2),
-    mapNone = Color(0xFF0F3D70), mapStable = Color(0xFFAACAE6), mapSlight = Color(0xFF5E8FBF), mapOften = Color(0xFF002C5F),
-    surface = Color(0xFF00214A), cellFull = Color(0xFFAACAE6), band = Color(0xFF00214A),
+    mapNone = Color.Transparent, mapStable = Color(0xFFAACAE6), mapSlight = Color(0xFF5E8FBF), mapOften = Color(0xFFF2A33A),
+    surface = Color(0xFF00214A), cellFull = Color(0xFFAACAE6), band = Color(0xFF00214A), caption = Color(0xFFFFFFFF),
 )
 
 val DayPalette = Palette(
@@ -80,8 +83,8 @@ val DayPalette = Palette(
     cellEmpty = Color(0xFFC9D6E4), cellBar = Color(0xFF7FA3C6), cellNow = Color(0xFF007FA8),
     primaryBg = Color(0xFF002C5F), primaryFg = Color(0xFFF6F3F2), outline = Color(0xFF9DB2C8),
     cardBg = Color(0xFFE4DCD3), cardFg = Color(0xFF002C5F), cardSub = Color(0xFF3B4A5C), accent = Color(0xFF007FA8),
-    mapNone = Color(0xFFE1E8F0), mapStable = Color(0xFF3A6EA5), mapSlight = Color(0xFF7FA3C6), mapOften = Color(0xFFF2F5F9),
-    surface = Color(0xFFFFFFFF), cellFull = Color(0xFF3A6EA5), band = Color(0xFFE3EAF2),
+    mapNone = Color.Transparent, mapStable = Color(0xFF3A6EA5), mapSlight = Color(0xFF7FA3C6), mapOften = Color(0xFFC46A12),
+    surface = Color(0xFFFFFFFF), cellFull = Color(0xFF3A6EA5), band = Color(0xFFE3EAF2), caption = Color(0xFF002C5F),
 )
 
 val LocalPalette = staticCompositionLocalOf { NightPalette }

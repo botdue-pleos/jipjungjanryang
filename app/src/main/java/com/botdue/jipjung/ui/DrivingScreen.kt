@@ -1,23 +1,17 @@
 package com.botdue.jipjung.ui
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,7 +24,9 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -38,8 +34,13 @@ import androidx.compose.ui.text.style.TextAlign
 import kotlinx.coroutines.delay
 
 /**
- * 주행 중: 화면 가운데 다음 회전 하나만. 남은 거리를 링이 줄어들며 보여 주고,
- * 할 말은 영화 자막처럼 아래 띠에 한 줄로. 시연에서는 남은 거리가 1초마다 줄어든다.
+ * 주행 중: 회전 화살표와 거리는 내비가 이미 보여 주므로 여기선 작은 보조 링으로만 둔다.
+ * 화면의 주인공은 이 앱만 할 수 있는 한 줄 자막 "지금 오른쪽 깜빡이를 켜세요"다.
+ * 주행 중에는 누를 버튼을 두지 않는다. 메모는 말로("메모"), P단은 기어 신호로 들어온다.
+ *
+ * 시연 조작(실제 차량에서는 STT와 기어 P 신호가 대신한다): 아래 음성 힌트 줄을 누르면 "메모"를 말한 것으로,
+ * 화면 다른 곳을 길게 누르면 P단에 넣은 것으로 친다. [demoHints]가 false(캡처 모드)면 이 안내 글자도 숨긴다.
+ * [fixedDistance]를 주면 남은 거리를 그 값에 멈춘다(캡처용). 없으면 1초마다 25m씩 줄어든다.
  */
 @Composable
 fun DrivingScreen(
@@ -47,9 +48,12 @@ fun DrivingScreen(
     memos: List<String>,
     onAddMemo: () -> Unit,
     onPark: () -> Unit,
+    demoHints: Boolean = true,
+    fixedDistance: Int? = null,
 ) {
-    var distance by remember { mutableIntStateOf(300) }
-    LaunchedEffect(Unit) {
+    var distance by remember { mutableIntStateOf(fixedDistance ?: 300) }
+    LaunchedEffect(fixedDistance) {
+        if (fixedDistance != null) return@LaunchedEffect
         while (true) {
             delay(1000)
             distance = if (distance <= 0) 300 else distance - 25
@@ -57,102 +61,95 @@ fun DrivingScreen(
     }
     val remind = helpMode && distance in 1..100
 
-    Column(Modifier.fillMaxSize().background(pal.bg)) {
-        Column(
+    Column(
+        Modifier
+            .fillMaxSize()
+            .background(pal.bg)
+            // 시연용 숨은 조작: 길게 누르면 P단
+            .pointerInput(Unit) { detectTapGestures(onLongPress = { onPark() }) }
+            .padding(start = 64.px, end = 64.px, top = 52.px, bottom = 40.px),
+    ) {
+        // 위: 지금 상태와 작은 남은 거리 링 (보조)
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            T(if (helpMode) "도움 모드로 운전 중" else "운전 중", 28.tx, Modifier.weight(1f), color = pal.sub)
+            DistanceRing(distance)
+        }
+
+        // 가운데: 자막이 주인공
+        Box(
             Modifier
                 .weight(1f)
-                .fillMaxWidth()
-                .padding(top = 52.px),
-            horizontalAlignment = Alignment.CenterHorizontally,
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center,
         ) {
-            T(if (helpMode) "도움 모드로 운전 중" else "운전 중", 28.tx, color = pal.sub)
-            Spacer(Modifier.weight(1f))
-            DistanceRing(distance)
-            Spacer(Modifier.weight(1.2f))
-        }
-        // 아래 자막 띠: 지금 할 일 한 줄, 맡겨 둔 생각, 시연 버튼
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .background(pal.band)
-                .padding(horizontal = 64.px, vertical = 44.px),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            T(
-                when {
-                    remind -> "지금 오른쪽 깜빡이를 켜세요"
-                    helpMode -> "100m 앞에서 깜빡이를 알려드려요"
-                    else -> "오른쪽으로 도세요"
-                },
-                if (remind) 44.tx else 32.tx,
-                weight = if (remind) FontWeight.ExtraBold else FontWeight.Normal,
-                color = if (remind) pal.cellNow else pal.sub,
-                align = TextAlign.Center,
-            )
-            Spacer(Modifier.height(22.px))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                memos.take(5).forEach { Box(Modifier.padding(end = 10.px).size(20.px).background(pal.cardBg, CircleShape)) }
+            if (remind) {
                 T(
-                    if (memos.isEmpty()) "떠오른 생각은 \"메모\"라고 말씀만 하세요"
-                    else "맡겨 둔 생각 ${memos.size}개, 도착하면 돌려드려요",
-                    26.tx, Modifier.padding(start = if (memos.isEmpty()) 0.px else 6.px), color = pal.fg,
+                    "지금 오른쪽\n깜빡이를 켜세요",
+                    104.tx, Modifier.semantics { liveRegion = LiveRegionMode.Assertive },
+                    weight = FontWeight.ExtraBold, color = pal.caption, lineHeight = 1.2f, align = TextAlign.Center,
+                )
+            } else {
+                T(
+                    if (helpMode) "회전 100m 앞에서\n깜빡이를 알려드려요" else "도움 모드 꺼짐\n운전 기록만 남겨요",
+                    44.tx, color = pal.sub, lineHeight = 1.4f, align = TextAlign.Center,
                 )
             }
-            Spacer(Modifier.height(36.px))
-            // 시연용: 실제 차량에서는 STT("메모")와 기어 P 신호가 대신한다
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.px)) {
-                DemoButton("\"메모\" 말하기", Modifier.weight(1f), onAddMemo)
-                DemoButton("P단에 넣기", Modifier.weight(1f), onPark)
-            }
+        }
+
+        // 아래: 맡겨 둔 생각과 음성 힌트 한 줄. 누를 것은 없다
+        Divider()
+        Row(
+            Modifier
+                .fillMaxWidth()
+                // 시연용 숨은 조작: 이 줄을 누르면 "메모"라고 말한 것으로 친다
+                .pointerInput(Unit) { detectTapGestures(onTap = { onAddMemo() }) }
+                .padding(top = 36.px, bottom = 12.px),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            memos.take(5).forEach { Box(Modifier.padding(end = 10.px).size(20.px).background(pal.cardBg, CircleShape)) }
+            T(
+                if (memos.isEmpty()) "떠오른 생각은 \"메모\"라고 말하세요"
+                else "생각 ${memos.size}개 맡아 뒀어요 · \"메모\"라고 말하세요",
+                30.tx, Modifier.padding(start = if (memos.isEmpty()) 0.px else 6.px), color = pal.fg,
+            )
+        }
+        if (demoHints) {
+            T("시연: 이 줄을 누르면 메모, 화면을 길게 누르면 P단", 24.tx, color = pal.outline)
         }
     }
 }
 
-@Composable
-private fun DemoButton(text: String, modifier: Modifier, onClick: () -> Unit) {
-    Box(
-        modifier
-            .height(88.px)
-            .border(BorderStroke(2.px, pal.outline), RoundedCornerShape(44.px))
-            .clickable(role = Role.Button, onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) { T(text, 26.tx, weight = FontWeight.SemiBold) }
-}
-
-/** 남은 거리 링: 300m에서 시작해 0으로 줄어든다. 가운데 화살표·거리·방향 */
+/** 남은 거리 링(보조): 300m에서 0으로 줄어든다. 가운데 작은 화살표와 거리. 방향 문장은 두지 않는다 */
 @Composable
 private fun DistanceRing(distance: Int) {
     val p = pal
     Box(
         Modifier
-            .size(640.px)
+            .size(200.px)
             .semantics { contentDescription = "${distance}미터 앞에서 오른쪽으로" },
         contentAlignment = Alignment.Center,
     ) {
         Canvas(Modifier.fillMaxSize()) {
-            val w = size.width * 0.032f
+            val w = size.width * 0.05f
             val inset = w / 2
             val arcSize = androidx.compose.ui.geometry.Size(size.width - w, size.height - w)
             val tl = androidx.compose.ui.geometry.Offset(inset, inset)
             drawArc(p.cellEmpty, 0f, 360f, false, tl, arcSize, style = Stroke(w))
             drawArc(p.cellNow, -90f, 360f * (distance.coerceIn(0, 300) / 300f), false, tl, arcSize, style = Stroke(w, cap = StrokeCap.Round))
-            // 우회전 화살표 (거리 숫자 위)
+            // 작은 우회전 화살표 (거리 숫자 위)
             val u = size.width / 320f
-            val stroke = Stroke(width = 9f * u, cap = StrokeCap.Round, join = StrokeJoin.Round)
-            val dy = -92f * u
+            val stroke = Stroke(width = 14f * u, cap = StrokeCap.Round, join = StrokeJoin.Round)
+            val dy = -70f * u
             val arrow = Path().apply {
-                moveTo(128 * u, 196 * u + dy); lineTo(128 * u, 150 * u + dy)
-                quadraticTo(128 * u, 132 * u + dy, 146 * u, 132 * u + dy); lineTo(190 * u, 132 * u + dy)
-                moveTo(174 * u, 114 * u + dy); lineTo(192 * u, 132 * u + dy); lineTo(174 * u, 150 * u + dy)
+                moveTo(136 * u, 180 * u + dy); lineTo(136 * u, 150 * u + dy)
+                quadraticTo(136 * u, 132 * u + dy, 154 * u, 132 * u + dy); lineTo(186 * u, 132 * u + dy)
+                moveTo(170 * u, 116 * u + dy); lineTo(186 * u, 132 * u + dy); lineTo(170 * u, 148 * u + dy)
             }
-            drawPath(arrow, p.fg, style = stroke)
+            drawPath(arrow, p.sub, style = stroke)
         }
-        Column(Modifier.offset(y = 64.px), horizontalAlignment = Alignment.CenterHorizontally) {
-            Row(verticalAlignment = Alignment.Bottom) {
-                T("$distance", 184.tx, weight = FontWeight.ExtraBold, lineHeight = 1f)
-                T("m", 60.tx, Modifier.padding(start = 8.px, bottom = 18.px), weight = FontWeight.Bold)
-            }
-            T("오른쪽으로 도세요", 34.tx, color = pal.sub)
+        Row(Modifier.offset(y = 24.px), verticalAlignment = Alignment.Bottom) {
+            T("$distance", 52.tx, weight = FontWeight.Bold, color = p.sub, lineHeight = 1f)
+            T("m", 26.tx, Modifier.padding(start = 2.px, bottom = 4.px), color = p.sub)
         }
     }
 }

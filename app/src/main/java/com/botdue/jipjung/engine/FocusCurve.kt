@@ -65,7 +65,7 @@ class FocusCurve(
 
     /**
      * 도움 모드 효과: 같은 시간대에서 도움 모드를 켠 날과 끈 날의 놓침 비율.
-     * 기록이 없는 쪽은 null. 약효나 원인을 추정하지 않고 관찰된 비율만 견준다.
+     * 기록이 없는 쪽은 null. 원인을 추정하지 않고 관찰된 비율만 견준다.
      */
     fun helpEffect(hours: IntRange, helpDays: Set<LocalDate>): HelpEffect {
         val inHours = results.filter { hourOf(it) in hours }

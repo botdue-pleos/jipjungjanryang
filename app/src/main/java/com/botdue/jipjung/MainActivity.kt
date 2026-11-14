@@ -36,10 +36,14 @@ class MainActivity : ComponentActivity() {
         val source = DemoSignalSource()
         val results = MissedTurnSignalDetector().detect(source.signals())
         val curve = FocusCurve(results)
-        // 화면 캡처·영상용: adb shell am start ... --es screen Parked --ei memos 3
+        // 화면 캡처·영상용: adb shell am start ... --es screen Driving --ei memos 2 --ei distance 80 --ez clean true
         val start = intent.getStringExtra("screen")?.let { runCatching { Screen.valueOf(it) }.getOrNull() } ?: Screen.Depart
         val startMemos = intent.getIntExtra("memos", 0)
-        setContent { JipjungApp(curve, source.helpDays, start, startMemos) }
+        // 캡처 모드: 시연 조작 안내 글자를 숨긴다 (숨은 조작 자체는 그대로 동작)
+        val clean = intent.getBooleanExtra("clean", false)
+        // 주행 화면의 남은 거리를 이 값(m)에 멈춘다. 없으면 300m부터 줄어든다
+        val distance = if (intent.hasExtra("distance")) intent.getIntExtra("distance", 300) else null
+        setContent { JipjungApp(curve, source.helpDays, start, startMemos, clean, distance) }
     }
 }
 
@@ -51,7 +55,14 @@ private val SAMPLE_MEMOS = listOf(
 )
 
 @Composable
-fun JipjungApp(curve: FocusCurve, helpDays: Set<java.time.LocalDate>, start: Screen = Screen.Depart, startMemos: Int = 0) {
+fun JipjungApp(
+    curve: FocusCurve,
+    helpDays: Set<java.time.LocalDate>,
+    start: Screen = Screen.Depart,
+    startMemos: Int = 0,
+    clean: Boolean = false,
+    fixedDistance: Int? = null,
+) {
     // AAOS 주간/야간 모드를 따른다
     val palette = if (isSystemInDarkTheme()) NightPalette else DayPalette
     var screen by remember { mutableStateOf(start) }
@@ -81,6 +92,8 @@ fun JipjungApp(curve: FocusCurve, helpDays: Set<java.time.LocalDate>, start: Scr
                 memos = memos.map { it.text },
                 onAddMemo = { if (memos.size < SAMPLE_MEMOS.size) memos += SAMPLE_MEMOS[memos.size] },
                 onPark = { screen = Screen.Parked },
+                demoHints = !clean,
+                fixedDistance = fixedDistance,
             )
             Screen.Parked -> ParkedScreen(
                 memos = memos,

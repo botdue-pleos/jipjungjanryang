@@ -55,21 +55,25 @@ fun DepartScreen(
         T(clock, 28.tx, Modifier.align(Alignment.End), color = pal.sub)
         ChargeRing(curve.barHeights(), window, risky)
         Spacer(Modifier.height(12.px))
+        // 결론은 링 가운데에 있으니 여기서는 근거만. 칸 읽는 법은 링 설명(contentDescription)에 둔다
         T(
-            if (risky) "지난 3주, 이 시간엔 회전 안내를 오전보다 ${ratio}배 자주 놓쳤어요. 칸이 찰수록 안내를 잘 따른 시간이에요."
-            else "지난 3주, 이 시간엔 회전 안내를 잘 따르셨어요. 칸이 찰수록 안내를 잘 따른 시간이에요.",
-            30.tx, Modifier.width(720.px), color = pal.fg, lineHeight = 1.6f, align = TextAlign.Center,
+            if (risky) "지난 3주, 이 시간엔 회전 안내를 오전보다 ${ratio}배 자주 놓쳤어요."
+            else "지난 3주, 이 시간엔 회전 안내를 잘 따르셨어요.",
+            30.tx, Modifier.width(720.px), color = pal.fg, lineHeight = 1.5f, align = TextAlign.Center,
         )
         if (risky) {
-            Spacer(Modifier.height(14.px))
+            Spacer(Modifier.height(10.px))
             T(
                 "깜빡이 놓침 ${curve.signalMissCount(window)}번, 지나친 갈림길 ${curve.passedCount(window)}번",
                 26.tx, color = pal.sub, align = TextAlign.Center,
             )
+            // 도움 모드 제안에 늘 붙인다. 판정이 아니라 본인이 돌아보게 하는 한 문장 (TTS도 같은 문장)
+            Spacer(Modifier.height(18.px))
+            T(BODY_CHECK, 26.tx, color = pal.fg, weight = FontWeight.SemiBold, align = TextAlign.Center)
         }
         Spacer(Modifier.weight(1f))
         T("도움 모드: 편한 길, 회전 전 한 번 더, 시원한 바람", 24.tx, color = pal.sub, align = TextAlign.Center)
-        Spacer(Modifier.height(28.px))
+        Spacer(Modifier.height(20.px))
         Box(
             Modifier
                 .fillMaxWidth()
@@ -78,10 +82,10 @@ fun DepartScreen(
                 .clickable(role = Role.Button) { onStart(true) },
             contentAlignment = Alignment.Center,
         ) { T("도움 모드로 출발", 36.tx, weight = FontWeight.ExtraBold, color = pal.primaryFg) }
-        Spacer(Modifier.height(12.px))
+        Spacer(Modifier.height(8.px))
         Box(
             Modifier
-                .height(88.px)
+                .height(80.px)
                 .clickable(role = Role.Button) { onStart(false) }
                 .padding(horizontal = 40.px),
             contentAlignment = Alignment.Center,
@@ -99,7 +103,7 @@ fun ChargeRing(heights: List<Int>, nowHours: IntRange, risky: Boolean) {
     Box(
         Modifier
             .size(width = 720.px, height = 690.px)
-            .semantics { contentDescription = "하루 집중 잔량. 칸이 많이 찬 시간일수록 회전 안내를 잘 따랐어요." },
+            .semantics { contentDescription = "하루 집중 잔량. 칸이 많이 찬 시간일수록 회전 안내를 잘 따랐어요. 지금 ${nowHours.first}시부터 ${nowHours.last + 1}시는 " + if (risky) "흐트러지기 쉬운 시간이에요." else "잘 따르는 시간이에요." },
     ) {
         Canvas(Modifier.fillMaxSize()) {
             val c = Offset(size.width / 2, size.height * 0.53f)
@@ -135,11 +139,17 @@ fun ChargeRing(heights: List<Int>, nowHours: IntRange, risky: Boolean) {
         label("12시", 96, 94, false)
         label("지금", 582, 154, true)
         label("24시", 582, 626, false)
-        T(
-            if (risky) "충전 칸이\n가장 적은 때" else "충전 칸이\n넉넉한 때",
-            46.tx,
+        // 링 가운데는 결론부터: 지금 몇 시부터 몇 시가 어떤 시간인지
+        Column(
             Modifier.align(Alignment.Center).offset(y = 24.px),
-            weight = FontWeight.ExtraBold, lineHeight = 1.3f, align = TextAlign.Center,
-        )
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            T("지금 ${nowHours.first}~${nowHours.last + 1}시", 34.tx, color = p.cellNow, weight = FontWeight.Bold)
+            Spacer(Modifier.height(6.px))
+            T(
+                if (risky) "흐트러지기\n쉬운 시간" else "잘 따르는\n시간",
+                46.tx, weight = FontWeight.ExtraBold, lineHeight = 1.25f, align = TextAlign.Center,
+            )
+        }
     }
 }
