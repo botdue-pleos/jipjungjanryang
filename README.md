@@ -13,7 +13,7 @@
 
 <img src="docs/mockups/2_driving.jpg" width="100%" alt="주행 중 집중잔량 화면이 계기판과 이어진 중앙 디스플레이에 떠 있는 모습">
 
-[움직이는 장면](#움직이는-장면) · [**시연 영상 (65초)**](docs/demo.mp4) · [APK 받기](apk/봇듀_집중잔량_release.apk) · [개발일지](docs/개발일지.md) · [시스템 구조](#시스템-구조)
+[움직이는 장면](#움직이는-장면) · [**시연 영상 (72초)**](docs/demo.mp4) · [APK 받기](apk/봇듀_집중잔량_release.apk) · [개발일지](docs/개발일지.md) · [시스템 구조](#시스템-구조)
 
 </div>
 
@@ -251,7 +251,7 @@ adb shell am start -S -n com.botdue.jipjung/.MainActivity --es screen Weekly --e
 - [x] 디자인 "밤 충전소": 충전 칸 곡선, 생각 카드, 빈 충전 칸 지도 (v0.4.0)
 - [x] 시연 영상 v6: v0.4.0 화면으로 다시 녹화
 - [x] 디자인 v2 "충전 링": 네 앱이 겹치지 않게 화면 문법을 나눔. 충전 링 출발 화면, 남은 거리 링과 자막 띠, 알약 칸 지도, 시연 영상 v8 (v0.5.0)
-- [x] 시연 영상 v9 (v0.6.0, 65초): 자막 중심 주행 화면, 약물운전 개정법 이후 "판정하지 않는다" 장면
+- [x] 시연 영상 v10 (v0.6.0, 72초): 자막 중심 주행 화면, 약물운전 개정법 이후 "판정하지 않는다" 장면, Pleos Connect Emulator v2.1.0 실제 실행 장면
 - [x] 약물운전 개정법 대응(복용 시각 기준 기본 꺼짐, 고지 문구), 주행 화면 자막 중심·버튼 제거, 주간 지도 칸 의미 바로잡기, P단 화면 한 화면에, 캡처 모드 (v0.6.0)
 - [x] Pleos Connect Emulator v2.1.0에서 release APK 실행 확인, 실제 창 크기에 맞춰 비례 확대(FitWindow)
 - [ ] Pleos Connect Emulator v2.1.0에서 SDK 콜백 연결 (`PleosSignalSource`), 2차 PT 전
