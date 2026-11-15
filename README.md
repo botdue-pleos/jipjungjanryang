@@ -21,6 +21,17 @@
 > 2026 현대자동차그룹 차량용 앱 개발 공모전 "Code your App into Pleos App Market" 출품작, 팀 봇듀.
 > 차량 신호는 아직 시연용 3주치 주행 데이터로 재생한다. Pleos SDK 콜백 연결은 [현재 상태](#현재-상태)에 적었다.
 
+## Pleos Connect 에뮬레이터에서 실제로 실행한 화면
+
+**Pleos Connect Emulator v2.1.0**(2560×1440, 160dpi)에 release APK를 설치해 실행한 전체 화면이다. 왼쪽은 Pleos 차량 상태, 가운데가 집중잔량(세로 1칸), 오른쪽은 Pleos 지도. 가로 2칸은 지도 자리까지 펼친 화면이다. 차량 신호는 아직 시연용 데이터로 재생한다.
+
+<table>
+<tr><td width="50%"><img src="docs/pleos/1_depart.jpg" alt="Pleos Connect 에뮬레이터: 출발할 때 (야간)"></td><td width="50%"><img src="docs/pleos/2_driving.jpg" alt="Pleos Connect 에뮬레이터: 주행 중 깜빡이 안내"></td></tr>
+<tr><td><b>출발할 때 (야간)</b></td><td><b>주행 중 깜빡이 안내</b></td></tr>
+<tr><td width="50%"><img src="docs/pleos/3_parked.jpg" alt="Pleos Connect 에뮬레이터: P단: 맡겨 둔 생각"></td><td width="50%"><img src="docs/pleos/4_weekly.jpg" alt="Pleos Connect 에뮬레이터: 가로 2칸: 이번 주 집중 지도"></td></tr>
+<tr><td><b>P단: 맡겨 둔 생각</b></td><td><b>가로 2칸: 이번 주 집중 지도</b></td></tr>
+</table>
+
 ## 한눈에 보기
 
 | | |
@@ -221,9 +232,15 @@ adb shell am start -S -n com.botdue.jipjung/.MainActivity --es screen Weekly --e
 
 ## 테스트 환경
 
-- 지금 확인한 곳: Android Emulator(API 35). `adb shell wm size 920x1414`와 `adb shell wm density 240`으로 Pleos 앱 창 세로 1칸(920×1330)에 시스템 바를 더한 크기를 맞춰 찍었다. 가로 2칸 화면(주간 지도)은 1870×1330 창 기준이다.
-- 목표 환경: Pleos Connect Emulator v2.1.0(AAOS).
-- Pleos 이미지에 실제로 연결해 SDK 콜백을 받는 것은 아직 하지 않았다. 2차 PT 전에 할 예정이다.
+| 항목 | 내용 |
+| --- | --- |
+| 테스트 기기 | **Pleos Connect Emulator v2.1.0** (Android 14 · API 34 Automotive, 시스템 이미지 "Pleos Connect v2.1.0 APIs" arm64, 빌드 `RELEASE.release_connect_v2.1.0`), Android Emulator 35.2.10, macOS (Apple Silicon) |
+| 화면 규격 | AVD 프로필 Pleos Connect v2.1.0: **2560×1440, 160dpi(mdpi), 12.8인치**, RAM 4GB, Cold boot |
+| 앱 창 | 세로 1칸 **841×1210dp** (Pleos 화면에서 x 853~1694, y 90~1300), 가로 2칸 **1706×1210dp**. 앱은 설계 기준 창(세로 613×887dp, 가로 1247×887dp)을 실제 창 크기에 맞춰 통째로 비례 확대한다 (`ui/Theme.kt`의 `FitWindow`) |
+| 실행 확인 | release APK를 설치해 위 화면처럼 세로 1칸·가로 2칸에서 실행했다 ([Pleos 실제 화면](#pleos-connect-에뮬레이터에서-실제로-실행한-화면)) |
+| 화면 이미지(docs/screens) | 개발 중에는 Android Emulator(API 35)를 `wm size 920x1414`·`wm density 240`으로 앱 창 크기(920×1330px)만 맞춰 찍었다 |
+| 아직 안 한 것 | Vehicle·NaviHelper SDK 콜백 실연결 (지금 차량 신호는 시연용 데이터로 재생). 2차 PT 전에 Virtual Console(`adb forward tcp:8088 tcp:8088`)로 신호를 넣어 확인할 예정 |
+| 빌드 | Android Studio, Kotlin(Jetpack Compose), minSdk 28, Gradle 8.13 |
 
 ## 현재 상태
 
@@ -236,6 +253,7 @@ adb shell am start -S -n com.botdue.jipjung/.MainActivity --es screen Weekly --e
 - [x] 디자인 v2 "충전 링": 네 앱이 겹치지 않게 화면 문법을 나눔. 충전 링 출발 화면, 남은 거리 링과 자막 띠, 알약 칸 지도, 시연 영상 v8 (v0.5.0)
 - [x] 시연 영상 v9 (v0.6.0, 65초): 자막 중심 주행 화면, 약물운전 개정법 이후 "판정하지 않는다" 장면
 - [x] 약물운전 개정법 대응(복용 시각 기준 기본 꺼짐, 고지 문구), 주행 화면 자막 중심·버튼 제거, 주간 지도 칸 의미 바로잡기, P단 화면 한 화면에, 캡처 모드 (v0.6.0)
+- [x] Pleos Connect Emulator v2.1.0에서 release APK 실행 확인, 실제 창 크기에 맞춰 비례 확대(FitWindow)
 - [ ] Pleos Connect Emulator v2.1.0에서 SDK 콜백 연결 (`PleosSignalSource`), 2차 PT 전
 - [ ] 생각 주차장·세운 자리 STT·TTS, 휴대폰 전송 방식 확인, 내리기 전 확인 실제 신호, 로컬 DB 저장
 - [ ] 도움 모드 경로 옵션·공조 제어, 시연용 주행 데이터 재생 도구 (2차 PT용)

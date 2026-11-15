@@ -26,6 +26,7 @@ import com.botdue.jipjung.ui.Memo
 import com.botdue.jipjung.ui.NightPalette
 import com.botdue.jipjung.ui.ParkedScreen
 import com.botdue.jipjung.ui.WeeklyScreen
+import com.botdue.jipjung.ui.FitWindow
 
 enum class Screen { Depart, Driving, Parked, Weekly }
 
@@ -43,7 +44,7 @@ class MainActivity : ComponentActivity() {
         val clean = intent.getBooleanExtra("clean", false)
         // 주행 화면의 남은 거리를 이 값(m)에 멈춘다. 없으면 300m부터 줄어든다
         val distance = if (intent.hasExtra("distance")) intent.getIntExtra("distance", 300) else null
-        setContent { JipjungApp(curve, source.helpDays, start, startMemos, clean, distance) }
+        setContent { FitWindow { JipjungApp(curve, source.helpDays, start, startMemos, clean, distance) } }
     }
 }
 
